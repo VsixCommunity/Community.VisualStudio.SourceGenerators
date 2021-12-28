@@ -115,11 +115,65 @@ namespace Community.VisualStudio.SourceGenerators {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The command table file &apos;{0}&apos; is invalid: {1}.
+        /// </summary>
+        internal static string CVSSG004_MessageFormat {
+            get {
+                return ResourceManager.GetString("CVSSG004_MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Command table file shuld be valid.
+        /// </summary>
+        internal static string CVSSG004_Title {
+            get {
+                return ResourceManager.GetString("CVSSG004_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The symbol &apos;{0}&apos; is defined multiple times with different values.
+        /// </summary>
+        internal static string CVSSG005_MessageFormat {
+            get {
+                return ResourceManager.GetString("CVSSG005_MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Symbols in command tables should be unique.
+        /// </summary>
+        internal static string CVSSG005_Title {
+            get {
+                return ResourceManager.GetString("CVSSG005_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The manifest file could not be parsed. {0}.
         /// </summary>
         internal static string Error_CouldNotParseManifest {
             get {
                 return ResourceManager.GetString("Error_CouldNotParseManifest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The GuidSymbol named &apos;{0}&apos; cannot be parsed as a GUID..
+        /// </summary>
+        internal static string Error_InvalidGuidSymbol {
+            get {
+                return ResourceManager.GetString("Error_InvalidGuidSymbol", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The IDSymbol named &apos;{0}&apos; cannot be parsed as a hexadecimal number..
+        /// </summary>
+        internal static string Error_InvalidIdSymbol {
+            get {
+                return ResourceManager.GetString("Error_InvalidIdSymbol", resourceCulture);
             }
         }
         

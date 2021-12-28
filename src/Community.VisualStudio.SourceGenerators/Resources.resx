@@ -137,9 +137,31 @@
   <data name="CVSSG003_Title" xml:space="preserve">
     <value>Namespace must be specified for generated code</value>
   </data>
+  <data name="CVSSG004_MessageFormat" xml:space="preserve">
+    <value>The command table file '{0}' is invalid: {1}</value>
+    <comment>{0} = File name; {1} = Error message</comment>
+  </data>
+  <data name="CVSSG004_Title" xml:space="preserve">
+    <value>Command table file shuld be valid</value>
+  </data>
+  <data name="CVSSG005_MessageFormat" xml:space="preserve">
+    <value>The symbol '{0}' is defined multiple times with different values</value>
+    <comment>{0} = Symbol name</comment>
+  </data>
+  <data name="CVSSG005_Title" xml:space="preserve">
+    <value>Symbols in command tables should be unique</value>
+  </data>
   <data name="Error_CouldNotParseManifest" xml:space="preserve">
     <value>The manifest file could not be parsed. {0}</value>
     <comment>{0} = Error message</comment>
+  </data>
+  <data name="Error_InvalidGuidSymbol" xml:space="preserve">
+    <value>The GuidSymbol named '{0}' cannot be parsed as a GUID.</value>
+    <comment>{0} = Symbol name</comment>
+  </data>
+  <data name="Error_InvalidIdSymbol" xml:space="preserve">
+    <value>The IDSymbol named '{0}' cannot be parsed as a hexadecimal number.</value>
+    <comment>{0} = Symbol name</comment>
   </data>
   <data name="Error_ManifestNodeNotFound" xml:space="preserve">
     <value>Could not find the XML node '{0}' in the vsixmanifest file.</value>

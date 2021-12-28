@@ -22,4 +22,12 @@
     <AdditionalFiles Condition="Exists('$(MSBuildProjectDirectory)\source.extension.vsixmanifest')" Include="$(MSBuildProjectDirectory)\source.extension.vsixmanifest" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- 
+    Include all VSCT files as additional files.
+    This allows the generator to access them.
+    -->
+    <AdditionalFiles Include="**\*.vsct"/>
+  </ItemGroup>
+
 </Project>
