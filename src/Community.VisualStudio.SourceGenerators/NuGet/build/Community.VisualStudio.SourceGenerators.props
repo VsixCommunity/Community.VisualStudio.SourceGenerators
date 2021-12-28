@@ -1,0 +1,25 @@
+﻿<Project>
+  
+  <ItemGroup>
+    <!-- 
+    Allow the root namespace to be accessible within the generator.
+    This allows the generator to generate the code in the root namespace.
+    -->
+    <CompilerVisibleProperty Include="RootNamespace" />
+  
+    <!-- 
+    Allow the `Namespace` metadata of the AdditionalFiles to be accessible within the generator.
+    This allows the generator to generate the code into a specific namespace instead of the root namespace.
+    -->
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="Namespace" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 
+    Include the manifest file as an additional file. 
+    This allows the generator to access it.
+    -->
+    <AdditionalFiles Condition="Exists('$(MSBuildProjectDirectory)\source.extension.vsixmanifest')" Include="$(MSBuildProjectDirectory)\source.extension.vsixmanifest" />
+  </ItemGroup>
+
+</Project>
