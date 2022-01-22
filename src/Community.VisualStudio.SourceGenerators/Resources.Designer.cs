@@ -61,92 +61,74 @@ namespace Community.VisualStudio.SourceGenerators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The project does not contain a &apos;source.extension.vsixmanifest&apos; file.
-        /// </summary>
-        internal static string CVSSG001_MessageFormat {
-            get {
-                return ResourceManager.GetString("CVSSG001_MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Project should contain a VSIX manifest file.
-        /// </summary>
-        internal static string CVSSG001_Title {
-            get {
-                return ResourceManager.GetString("CVSSG001_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The &apos;source.extension.vsixmanifest&apos; file is invalid: {0}.
-        /// </summary>
-        internal static string CVSSG002_MessageFormat {
-            get {
-                return ResourceManager.GetString("CVSSG002_MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to VSIX manifest file should be valid.
-        /// </summary>
-        internal static string CVSSG002_Title {
-            get {
-                return ResourceManager.GetString("CVSSG002_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The project does not have a root namespace and a namespace was not specified against the AdditionalFiles item for {0}.
         /// </summary>
-        internal static string CVSSG003_MessageFormat {
+        internal static string CVSSG001_NoNamespace_MessageFormat {
             get {
-                return ResourceManager.GetString("CVSSG003_MessageFormat", resourceCulture);
+                return ResourceManager.GetString("CVSSG001_NoNamespace_MessageFormat", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Namespace must be specified for generated code.
         /// </summary>
-        internal static string CVSSG003_Title {
+        internal static string CVSSG001_NoNamespace_Title {
             get {
-                return ResourceManager.GetString("CVSSG003_Title", resourceCulture);
+                return ResourceManager.GetString("CVSSG001_NoNamespace_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;source.extension.vsixmanifest&apos; file is invalid: {0}.
+        /// </summary>
+        internal static string CVSSG002_InvalidManifestFile_MessageFormat {
+            get {
+                return ResourceManager.GetString("CVSSG002_InvalidManifestFile_MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VSIX manifest file should be valid.
+        /// </summary>
+        internal static string CVSSG002_InvalidManifestFile_Title {
+            get {
+                return ResourceManager.GetString("CVSSG002_InvalidManifestFile_Title", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The command table file &apos;{0}&apos; is invalid: {1}.
         /// </summary>
-        internal static string CVSSG004_MessageFormat {
+        internal static string CVSSG003_InvalidCommandTableFile_MessageFormat {
             get {
-                return ResourceManager.GetString("CVSSG004_MessageFormat", resourceCulture);
+                return ResourceManager.GetString("CVSSG003_InvalidCommandTableFile_MessageFormat", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Command table file shuld be valid.
         /// </summary>
-        internal static string CVSSG004_Title {
+        internal static string CVSSG003_InvalidCommandTableFile_Title {
             get {
-                return ResourceManager.GetString("CVSSG004_Title", resourceCulture);
+                return ResourceManager.GetString("CVSSG003_InvalidCommandTableFile_Title", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The symbol &apos;{0}&apos; is defined multiple times with different values.
         /// </summary>
-        internal static string CVSSG005_MessageFormat {
+        internal static string CVSSG004_DuplicateSymbol_MessageFormat {
             get {
-                return ResourceManager.GetString("CVSSG005_MessageFormat", resourceCulture);
+                return ResourceManager.GetString("CVSSG004_DuplicateSymbol_MessageFormat", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Symbols in command tables should be unique.
         /// </summary>
-        internal static string CVSSG005_Title {
+        internal static string CVSSG004_DuplicateSymbol_Title {
             get {
-                return ResourceManager.GetString("CVSSG005_Title", resourceCulture);
+                return ResourceManager.GetString("CVSSG004_DuplicateSymbol_Title", resourceCulture);
             }
         }
         
@@ -169,7 +151,7 @@ namespace Community.VisualStudio.SourceGenerators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The IDSymbol named &apos;{0}&apos; cannot be parsed as a hexadecimal number..
+        ///   Looks up a localized string similar to The IDSymbol named &apos;{0}&apos; cannot be parsed as a hexadecimal or integer number..
         /// </summary>
         internal static string Error_InvalidIdSymbol {
             get {

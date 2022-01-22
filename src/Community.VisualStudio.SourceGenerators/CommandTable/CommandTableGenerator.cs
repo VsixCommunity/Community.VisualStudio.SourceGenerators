@@ -9,18 +9,17 @@ namespace Community.VisualStudio.SourceGenerators;
 public class CommandTableGenerator : GeneratorBase, ISourceGenerator
 {
     private static readonly DiagnosticDescriptor _invalidCommandTableFile = new(
-        DiagnosticIds.CVSSG004_InvalidCommandTableFile,
-        new LocalizableResourceString(nameof(Resources.CVSSG004_Title), Resources.ResourceManager, typeof(Resources)),
-        new LocalizableResourceString(nameof(Resources.CVSSG004_MessageFormat), Resources.ResourceManager, typeof(Resources)),
+        DiagnosticIds.CVSSG003_InvalidCommandTableFile,
+        new LocalizableResourceString(nameof(Resources.CVSSG003_InvalidCommandTableFile_Title), Resources.ResourceManager, typeof(Resources)),
+        new LocalizableResourceString(nameof(Resources.CVSSG003_InvalidCommandTableFile_MessageFormat), Resources.ResourceManager, typeof(Resources)),
         CommonDiagnostics.Category,
         DiagnosticSeverity.Error,
         true
     );
 
     private static readonly DiagnosticDescriptor _duplicateSymbol = new(
-        DiagnosticIds.CVSSG005_DuplicateSymbol,
-        new LocalizableResourceString(nameof(Resources.CVSSG005_Title), Resources.ResourceManager, typeof(Resources)),
-        new LocalizableResourceString(nameof(Resources.CVSSG005_MessageFormat), Resources.ResourceManager, typeof(Resources)),
+        DiagnosticIds.CVSSG004_DuplicateSymbol,
+        new LocalizableResourceString(nameof(Resources.CVSSG004_DuplicateSymbol_Title), Resources.ResourceManager, typeof(Resources)),
         CommonDiagnostics.Category,
         DiagnosticSeverity.Error,
         true

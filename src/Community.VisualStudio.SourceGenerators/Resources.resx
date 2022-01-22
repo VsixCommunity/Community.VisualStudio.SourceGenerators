@@ -117,38 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CVSSG001_MessageFormat" xml:space="preserve">
-    <value>The project does not contain a 'source.extension.vsixmanifest' file</value>
-  </data>
-  <data name="CVSSG001_Title" xml:space="preserve">
-    <value>Project should contain a VSIX manifest file</value>
-  </data>
-  <data name="CVSSG002_MessageFormat" xml:space="preserve">
-    <value>The 'source.extension.vsixmanifest' file is invalid: {0}</value>
-    <comment>{0} = Error message</comment>
-  </data>
-  <data name="CVSSG002_Title" xml:space="preserve">
-    <value>VSIX manifest file should be valid</value>
-  </data>
-  <data name="CVSSG003_MessageFormat" xml:space="preserve">
+  <data name="CVSSG001_NoNamespace_MessageFormat" xml:space="preserve">
     <value>The project does not have a root namespace and a namespace was not specified against the AdditionalFiles item for {0}</value>
     <comment>{0} = Additional file name</comment>
   </data>
-  <data name="CVSSG003_Title" xml:space="preserve">
+  <data name="CVSSG001_NoNamespace_Title" xml:space="preserve">
     <value>Namespace must be specified for generated code</value>
   </data>
-  <data name="CVSSG004_MessageFormat" xml:space="preserve">
+  <data name="CVSSG002_InvalidManifestFile_MessageFormat" xml:space="preserve">
+    <value>The 'source.extension.vsixmanifest' file is invalid: {0}</value>
+    <comment>{0} = Error message</comment>
+  </data>
+  <data name="CVSSG002_InvalidManifestFile_Title" xml:space="preserve">
+    <value>VSIX manifest file should be valid</value>
+  </data>
+  <data name="CVSSG003_InvalidCommandTableFile_MessageFormat" xml:space="preserve">
     <value>The command table file '{0}' is invalid: {1}</value>
     <comment>{0} = File name; {1} = Error message</comment>
   </data>
-  <data name="CVSSG004_Title" xml:space="preserve">
+  <data name="CVSSG003_InvalidCommandTableFile_Title" xml:space="preserve">
     <value>Command table file shuld be valid</value>
   </data>
-  <data name="CVSSG005_MessageFormat" xml:space="preserve">
+  <data name="CVSSG004_DuplicateSymbol_MessageFormat" xml:space="preserve">
     <value>The symbol '{0}' is defined multiple times with different values</value>
     <comment>{0} = Symbol name</comment>
   </data>
-  <data name="CVSSG005_Title" xml:space="preserve">
+  <data name="CVSSG004_DuplicateSymbol_Title" xml:space="preserve">
     <value>Symbols in command tables should be unique</value>
   </data>
   <data name="Error_CouldNotParseManifest" xml:space="preserve">
@@ -160,7 +154,7 @@
     <comment>{0} = Symbol name</comment>
   </data>
   <data name="Error_InvalidIdSymbol" xml:space="preserve">
-    <value>The IDSymbol named '{0}' cannot be parsed as a hexadecimal number.</value>
+    <value>The IDSymbol named '{0}' cannot be parsed as a hexadecimal or integer number.</value>
     <comment>{0} = Symbol name</comment>
   </data>
   <data name="Error_ManifestNodeNotFound" xml:space="preserve">

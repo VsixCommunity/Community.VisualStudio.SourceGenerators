@@ -9,19 +9,10 @@ public class ManifestGenerator : GeneratorBase, ISourceGenerator
 {
     private const string _manifestFileName = "source.extension.vsixmanifest";
 
-    private static readonly DiagnosticDescriptor _manifestFileNotFound = new(
-        DiagnosticIds.CVSSG001_ManifestFileNotFound,
-        new LocalizableResourceString(nameof(Resources.CVSSG001_Title), Resources.ResourceManager, typeof(Resources)),
-        new LocalizableResourceString(nameof(Resources.CVSSG001_MessageFormat), Resources.ResourceManager, typeof(Resources)),
-        CommonDiagnostics.Category,
-        DiagnosticSeverity.Error,
-        true
-    );
-
     private static readonly DiagnosticDescriptor _invalidManifestFile = new(
         DiagnosticIds.CVSSG002_InvalidManifestFile,
-        new LocalizableResourceString(nameof(Resources.CVSSG002_Title), Resources.ResourceManager, typeof(Resources)),
-        new LocalizableResourceString(nameof(Resources.CVSSG002_MessageFormat), Resources.ResourceManager, typeof(Resources)),
+        new LocalizableResourceString(nameof(Resources.CVSSG002_InvalidManifestFile_Title), Resources.ResourceManager, typeof(Resources)),
+        new LocalizableResourceString(nameof(Resources.CVSSG002_InvalidManifestFile_MessageFormat), Resources.ResourceManager, typeof(Resources)),
         CommonDiagnostics.Category,
         DiagnosticSeverity.Error,
         true

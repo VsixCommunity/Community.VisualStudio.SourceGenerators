@@ -10,19 +10,10 @@ public class ManifestGeneratorTests : GeneratorTestBase
     protected override ISourceGenerator CreateGenerator() => new ManifestGenerator();
 
     [Fact]
-    public async Task ShouldReportDiagnosticWhenManifestFileIsNotFoundAsync()
-    {
-        ImmutableArray<Diagnostic> diagnostics;
-        (_, diagnostics) = await RunGeneratorAsync().ConfigureAwait(false);
-
-        Diagnostic diagnostic = Assert.Single(diagnostics);
-        Assert.Equal("CVSSG001", diagnostic.Id);
-        Assert.Equal(DiagnosticSeverity.Error, diagnostic.Severity);
-    }
-
-    [Fact]
     public async Task ShouldReportDiagnosticWhenManifestFileIsInvalidAsync()
     {
+        SetProjectProperty("RootNamespace", "Root");
+
         await WriteManifestAsync(@"
             <PackageManifest Version='2.0.0' xmlns='http://schemas.microsoft.com/developer/vsx-schema/2011'>
                 <Metadata/>
@@ -56,7 +47,7 @@ public class ManifestGeneratorTests : GeneratorTestBase
         (_, diagnostics) = await RunGeneratorAsync().ConfigureAwait(false);
 
         Diagnostic diagnostic = Assert.Single(diagnostics);
-        Assert.Equal("CVSSG003", diagnostic.Id);
+        Assert.Equal("CVSSG001", diagnostic.Id);
         Assert.Equal(DiagnosticSeverity.Error, diagnostic.Severity);
     }
 
