@@ -3,7 +3,7 @@ using System.Xml;
 
 namespace Community.VisualStudio.SourceGenerators;
 
-public class ManifestParser
+internal class ManifestParser
 {
     private static readonly Version _supportedManifestVersion = new(2, 0, 0);
 

@@ -4,12 +4,12 @@ using System.Xml;
 
 namespace Community.VisualStudio.SourceGenerators;
 
-public class CommandTableParser
+internal class CommandTableParser
 {
     private readonly XmlDocument _document;
     private readonly XmlNamespaceManager _namespaceManager;
 
-    public static CommandTable Parse(string contents)
+    public static CommandTable Parse(string name, string contents)
     {
         XmlDocument document = new();
 
@@ -24,7 +24,7 @@ public class CommandTableParser
             );
         }
 
-        return new CommandTableParser(document).Parse();
+        return new CommandTableParser(document).Parse(name);
     }
 
     private CommandTableParser(XmlDocument document)
@@ -34,41 +34,41 @@ public class CommandTableParser
         _namespaceManager.AddNamespace("x", document.DocumentElement.NamespaceURI);
     }
 
-    private CommandTable Parse()
+    private CommandTable Parse(string name)
     {
-        CommandTable commandTable = new();
-
-        XmlNodeList symbols = _document.SelectNodes("/x:CommandTable/x:Symbols/x:GuidSymbol", _namespaceManager);
-        foreach (XmlElement symbol in symbols.OfType<XmlElement>())
+        List<GUIDSymbol> guidSymbols = new();
+        XmlNodeList guidElements = _document.SelectNodes("/x:CommandTable/x:Symbols/x:GuidSymbol", _namespaceManager);
+        foreach (XmlElement guidElement in guidElements.OfType<XmlElement>())
         {
-            string guidName = symbol.GetAttribute("name");
+            string guidName = guidElement.GetAttribute("name");
 
-            if (!TryParseGuid(symbol.GetAttribute("value"), out Guid guidValue))
+            if (!TryParseGuid(guidElement.GetAttribute("value"), out Guid guidValue))
             {
                 throw new InvalidCommandTableException(
                     string.Format(CultureInfo.CurrentCulture, Resources.Error_InvalidGuidSymbol, guidName)
                 );
             }
 
-            commandTable.Guids[guidName] = guidValue;
-
-            IEnumerable<XmlElement> ids = symbol.SelectNodes("x:IDSymbol", _namespaceManager).OfType<XmlElement>();
-            foreach (XmlElement id in ids)
+            List<IDSymbol> idSymbols = new();
+            IEnumerable<XmlElement> idElements = guidElement.SelectNodes("x:IDSymbol", _namespaceManager).OfType<XmlElement>();
+            foreach (XmlElement idElement in idElements)
             {
-                string idName = id.GetAttribute("name");
+                string idName = idElement.GetAttribute("name");
 
-                if (!TryParseId(id.GetAttribute("value"), out int idValue))
+                if (!TryParseId(idElement.GetAttribute("value"), out int idValue))
                 {
                     throw new InvalidCommandTableException(
                         string.Format(CultureInfo.CurrentCulture, Resources.Error_InvalidIdSymbol, idName)
                     );
                 }
 
-                commandTable.Ids[idName] = idValue;
+                idSymbols.Add(new IDSymbol(idName, idValue));
             }
+
+            guidSymbols.Add(new GUIDSymbol(guidName, guidValue, idSymbols));
         }
 
-        return commandTable;
+        return new CommandTable(name, guidSymbols);
     }
 
     private static bool TryParseGuid(string text, out Guid value)
@@ -85,17 +85,20 @@ public class CommandTableParser
 
     private static bool TryParseId(string text, out int value)
     {
+        text = text.Trim();
+
         // The `NumberStyles.AllowHexSpecifier` style (which is part of the `HexNumber` style) does not
         // actually allow a hex specifier at the start of the string, so we need to trim that off ourselves.
         // The following regular expression is based on what the VSCT schema file uses for validation.
-        Match match = Regex.Match(text.Trim(), "^0[Xx]([0-9a-fA-F]*)$");
+        Match match = Regex.Match(text, "^0[Xx]([0-9a-fA-F]*)$");
 
         if (match.Success)
         {
             return int.TryParse(match.Groups[1].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value);
         }
-
-        value = 0;
-        return false;
+        else
+        {
+            return int.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out value);
+        }
     }
 }

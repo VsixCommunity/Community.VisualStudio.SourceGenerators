@@ -115,24 +115,6 @@ namespace Community.VisualStudio.SourceGenerators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The symbol &apos;{0}&apos; is defined multiple times with different values.
-        /// </summary>
-        internal static string CVSSG004_DuplicateSymbol_MessageFormat {
-            get {
-                return ResourceManager.GetString("CVSSG004_DuplicateSymbol_MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Symbols in command tables should be unique.
-        /// </summary>
-        internal static string CVSSG004_DuplicateSymbol_Title {
-            get {
-                return ResourceManager.GetString("CVSSG004_DuplicateSymbol_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The manifest file could not be parsed. {0}.
         /// </summary>
         internal static string Error_CouldNotParseManifest {

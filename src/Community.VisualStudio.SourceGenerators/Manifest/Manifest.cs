@@ -1,6 +1,6 @@
 ﻿namespace Community.VisualStudio.SourceGenerators;
 
-public class Manifest
+internal class Manifest
 {
     public string Id { get; set; } = "";
     public string Name { get; set; } = "";

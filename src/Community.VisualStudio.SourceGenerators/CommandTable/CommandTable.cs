@@ -1,8 +1,14 @@
 ﻿namespace Community.VisualStudio.SourceGenerators;
 
-public class CommandTable
+internal class CommandTable
 {
-    public Dictionary<string, Guid> Guids { get; } = new();
+    public CommandTable(string name, IEnumerable<GUIDSymbol> gUIDSymbols)
+    {
+        Name = name;
+        GUIDSymbols = gUIDSymbols;
+    }
 
-    public Dictionary<string, int> Ids { get; } = new();
+    public string Name { get; } 
+
+    public IEnumerable<GUIDSymbol> GUIDSymbols { get; } 
 }

@@ -7,7 +7,7 @@ namespace Community.VisualStudio.SourceGenerators;
 
 public class CommandTableGeneratorTests : GeneratorTestBase
 {
-    protected override ISourceGenerator CreateGenerator() => new CommandTableGenerator();
+    protected override IIncrementalGenerator CreateGenerator() => new CommandTableGenerator();
 
     [Fact]
     public async Task ShouldNotReportDiagnosticWhenNoCommandTableFilesAreFoundAsync()
@@ -45,7 +45,7 @@ public class CommandTableGeneratorTests : GeneratorTestBase
         (_, diagnostics) = await RunGeneratorAsync().ConfigureAwait(false);
 
         Diagnostic diagnostic = Assert.Single(diagnostics);
-        Assert.Equal("CVSSG003", diagnostic.Id);
+        Assert.Equal("CVSSG001", diagnostic.Id);
         Assert.Equal(DiagnosticSeverity.Error, diagnostic.Severity);
     }
 
@@ -184,74 +184,6 @@ public class CommandTableGeneratorTests : GeneratorTestBase
     }
 
     [Fact]
-    public async Task AllowsDuplicateGuidNamesWhenValuesAreTheSameAsync()
-    {
-        SetProjectProperty("RootNamespace", "Root");
-
-        await WriteCommandTableAsync(
-            "1.vsct",
-            @"
-            <CommandTable xmlns='http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                <Symbols>
-                    <GuidSymbol name='Foo' value='{005c838c-22d2-4ee4-8bc6-e18e3aa5fa47}'/>
-                </Symbols>
-            </CommandTable>"
-        ).ConfigureAwait(false);
-
-        await WriteCommandTableAsync(
-            "2.vsct",
-            @"
-            <CommandTable xmlns='http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                <Symbols>
-                    <GuidSymbol name='Foo' value='{005c838c-22d2-4ee4-8bc6-e18e3aa5fa47}'/>
-                </Symbols>
-            </CommandTable>"
-        ).ConfigureAwait(false);
-
-        Compilation compilation = await RunGeneratorAndVerifyNoDiagnosticsAsync().ConfigureAwait(false);
-
-        INamedTypeSymbol? packageGuidsType = compilation.GetTypeByMetadataName("Root.PackageGuids");
-        await VerifyPackageGuidsTypeAsync(
-            packageGuidsType,
-            ("Foo", new Guid("{005c838c-22d2-4ee4-8bc6-e18e3aa5fa47}"))
-        ).ConfigureAwait(false);
-    }
-
-    [Fact]
-    public async Task ReportsDiagnosticWhenGuidNameIsUsedMultipleTimesWithDifferentValuesAsync()
-    {
-        SetProjectProperty("RootNamespace", "Root");
-
-        await WriteCommandTableAsync(
-            "1.vsct",
-            @"
-            <CommandTable xmlns='http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                <Symbols>
-                    <GuidSymbol name='Foo' value='{005c838c-22d2-4ee4-8bc6-e18e3aa5fa47}'/>
-                </Symbols>
-            </CommandTable>"
-        ).ConfigureAwait(false);
-
-        await WriteCommandTableAsync(
-            "2.vsct",
-            @"
-            <CommandTable xmlns='http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                <Symbols>
-                    <GuidSymbol name='Foo' value='{b65f92ba-f6f0-4506-8763-c2b09cebd633}'/>
-                </Symbols>
-            </CommandTable>"
-        ).ConfigureAwait(false);
-
-        ImmutableArray<Diagnostic> diagnostics;
-        (_, diagnostics) = await RunGeneratorAsync().ConfigureAwait(false);
-
-        Diagnostic diagnostic = Assert.Single(diagnostics);
-        Assert.Equal("CVSSG005", diagnostic.Id);
-        Assert.Equal(DiagnosticSeverity.Error, diagnostic.Severity);
-        Assert.Contains("'Foo'", diagnostic.GetMessage(), StringComparison.Ordinal);
-    }
-
-    [Fact]
     public async Task RemovesGuidPrefixFromGuidNamesAsync()
     {
         SetProjectProperty("RootNamespace", "Root");
@@ -275,31 +207,6 @@ public class CommandTableGeneratorTests : GeneratorTestBase
             ("Foo", new Guid("{005c838c-22d2-4ee4-8bc6-e18e3aa5fa47}")),
             ("Bar", new Guid("{c717cf33-bc1f-47d4-a173-0efaacaad63c}"))
         ).ConfigureAwait(false);
-    }
-
-    [Fact]
-    public async Task ReportsDiagnosticWhenRemovingGuidPrefixResultsInDuplicateNameAsync()
-    {
-        SetProjectProperty("RootNamespace", "Root");
-
-        await WriteCommandTableAsync(
-            "1.vsct",
-            @"
-             <CommandTable xmlns='http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                 <Symbols>
-                     <GuidSymbol name='Foo' value='{005c838c-22d2-4ee4-8bc6-e18e3aa5fa47}'/>
-                     <GuidSymbol name='guidFoo' value='{2348289e-8def-40be-a777-6406feb6f459}'/>
-                 </Symbols>
-             </CommandTable>"
-            ).ConfigureAwait(false);
-
-        ImmutableArray<Diagnostic> diagnostics;
-        (_, diagnostics) = await RunGeneratorAsync().ConfigureAwait(false);
-
-        Diagnostic diagnostic = Assert.Single(diagnostics);
-        Assert.Equal("CVSSG005", diagnostic.Id);
-        Assert.Equal(DiagnosticSeverity.Error, diagnostic.Severity);
-        Assert.Contains("'guidFoo'", diagnostic.GetMessage(), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -452,82 +359,6 @@ public class CommandTableGeneratorTests : GeneratorTestBase
         ).ConfigureAwait(false);
     }
 
-    [Fact]
-    public async Task AllowsDuplicateIdNamesWhenValuesAreTheSameAsync()
-    {
-        SetProjectProperty("RootNamespace", "Root");
-
-        await WriteCommandTableAsync(
-            "1.vsct",
-            @"
-            <CommandTable xmlns='http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                <Symbols>
-                    <GuidSymbol name='First' value='{005c838c-22d2-4ee4-8bc6-e18e3aa5fa47}'>
-                        <IDSymbol name='Foo' value='0x5'/>
-                    </GuidSymbol>
-                </Symbols>
-            </CommandTable>"
-        ).ConfigureAwait(false);
-
-        await WriteCommandTableAsync(
-            "2.vsct",
-            @"
-            <CommandTable xmlns='http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                <Symbols>
-                    <GuidSymbol name='Second' value='{005c838c-22d2-4ee4-8bc6-e18e3aa5fa47}'>
-                        <IDSymbol name='Foo' value='0x5'/>
-                    </GuidSymbol>
-                </Symbols>
-            </CommandTable>"
-        ).ConfigureAwait(false);
-
-        Compilation compilation = await RunGeneratorAndVerifyNoDiagnosticsAsync().ConfigureAwait(false);
-
-        INamedTypeSymbol? packageIdsType = compilation.GetTypeByMetadataName("Root.PackageIds");
-        await VerifyPackageIdsTypeAsync(
-            packageIdsType,
-            ("Foo", 5)
-        ).ConfigureAwait(false);
-    }
-
-    [Fact]
-    public async Task ReportsDiagnosticWhenIdNameIsUsedMultipleTimesWithDifferentValuesAsync()
-    {
-        SetProjectProperty("RootNamespace", "Root");
-
-        await WriteCommandTableAsync(
-            "1.vsct",
-            @"
-            <CommandTable xmlns='http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                <Symbols>
-                    <GuidSymbol name='First' value='{005c838c-22d2-4ee4-8bc6-e18e3aa5fa47}'>
-                        <IDSymbol name='Foo' value='0x5'/>
-                    </GuidSymbol>
-                </Symbols>
-            </CommandTable>"
-        ).ConfigureAwait(false);
-
-        await WriteCommandTableAsync(
-            "2.vsct",
-            @"
-            <CommandTable xmlns='http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                <Symbols>
-                    <GuidSymbol name='Second' value='{005c838c-22d2-4ee4-8bc6-e18e3aa5fa47}'>
-                        <IDSymbol name='Foo' value='0x6'/>
-                    </GuidSymbol>
-                </Symbols>
-            </CommandTable>"
-        ).ConfigureAwait(false);
-
-        ImmutableArray<Diagnostic> diagnostics;
-        (_, diagnostics) = await RunGeneratorAsync().ConfigureAwait(false);
-
-        Diagnostic diagnostic = Assert.Single(diagnostics);
-        Assert.Equal("CVSSG005", diagnostic.Id);
-        Assert.Equal(DiagnosticSeverity.Error, diagnostic.Severity);
-        Assert.Contains("'Foo'", diagnostic.GetMessage(), StringComparison.Ordinal);
-    }
-
     private async Task WriteCommandTableAsync(string fileName, string contents)
     {
         await WriteFileAsync(fileName, contents).ConfigureAwait(false);
@@ -548,12 +379,16 @@ public class CommandTableGeneratorTests : GeneratorTestBase
 
         Assert.Equal(Accessibility.Internal, packageGuidsType.DeclaredAccessibility);
 
-        SyntaxReference syntaxReference = Assert.Single(packageGuidsType.DeclaringSyntaxReferences);
-        ClassDeclarationSyntax classDeclaration = Assert.IsAssignableFrom<ClassDeclarationSyntax>(
-            await syntaxReference.GetSyntaxAsync().ConfigureAwait(false)
-        );
+        List<ClassDeclarationSyntax> classDeclarations = new();
+        foreach (SyntaxReference reference in packageGuidsType.DeclaringSyntaxReferences)
+        {
+            classDeclarations.Add(Assert.IsAssignableFrom<ClassDeclarationSyntax>(await reference.GetSyntaxAsync().ConfigureAwait(false)));
+        }
 
-        Assert.Contains(classDeclaration.Modifiers, (x) => x.IsKind(SyntaxKind.PartialKeyword));
+        Assert.All(
+            classDeclarations,
+            (declaration) => Assert.Contains(declaration.Modifiers, (modifier) => modifier.IsKind(SyntaxKind.PartialKeyword))
+        );
 
         Assert.Equal(
             expected.SelectMany((x) => new[] { x.Name, $"{x.Name}String" }).OrderBy((x) => x).ToArray(),
@@ -604,12 +439,16 @@ public class CommandTableGeneratorTests : GeneratorTestBase
 
         Assert.Equal(Accessibility.Internal, packageIdsType.DeclaredAccessibility);
 
-        SyntaxReference syntaxReference = Assert.Single(packageIdsType.DeclaringSyntaxReferences);
-        ClassDeclarationSyntax classDeclaration = Assert.IsAssignableFrom<ClassDeclarationSyntax>(
-            await syntaxReference.GetSyntaxAsync().ConfigureAwait(false)
-        );
+        List<ClassDeclarationSyntax> classDeclarations = new();
+        foreach (SyntaxReference reference in packageIdsType.DeclaringSyntaxReferences)
+        {
+            classDeclarations.Add(Assert.IsAssignableFrom<ClassDeclarationSyntax>(await reference.GetSyntaxAsync().ConfigureAwait(false)));
+        }
 
-        Assert.Contains(classDeclaration.Modifiers, (x) => x.IsKind(SyntaxKind.PartialKeyword));
+        Assert.All(
+            classDeclarations,
+            (declaration) => Assert.Contains(declaration.Modifiers, (modifier) => modifier.IsKind(SyntaxKind.PartialKeyword))
+        );
 
         Assert.Equal(
             expected.Select((x) => x.Name).OrderBy((x) => x).ToArray(),

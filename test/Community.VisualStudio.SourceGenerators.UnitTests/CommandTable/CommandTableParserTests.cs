@@ -1,4 +1,6 @@
-﻿namespace Community.VisualStudio.SourceGenerators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Community.VisualStudio.SourceGenerators;
 
 public class CommandTableParserTests
 {
@@ -10,11 +12,11 @@ public class CommandTableParserTests
             <CommandTable xmlns='http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
             </CommandTable>".TrimStart();
 
-        CommandTable commandTable = CommandTableParser.Parse(contents);
+        CommandTable commandTable = CommandTableParser.Parse("test", contents);
 
         Assert.NotNull(commandTable);
-        Assert.Empty(commandTable.Guids);
-        Assert.Empty(commandTable.Ids);
+        Assert.Equal("test", commandTable.Name);
+        Assert.Empty(commandTable.GUIDSymbols);
     }
 
     [Fact]
@@ -31,19 +33,18 @@ public class CommandTableParserTests
                 </Symbols>
             </CommandTable>".TrimStart();
 
-        CommandTable commandTable = CommandTableParser.Parse(contents);
+        CommandTable commandTable = CommandTableParser.Parse("test", contents);
 
         Assert.NotNull(commandTable);
+        Assert.Equal("test", commandTable.Name);
 
         VerifySymbols(
-            commandTable.Guids,
-            ("Foo", Guid.Parse("{499b3e29-b8a1-4016-a972-84ad08da139a}"))
-        );
-
-        VerifySymbols(
-            commandTable.Ids,
-            ("One", 1),
-            ("Two", 2)
+            commandTable.GUIDSymbols,
+            new GUIDSymbol(
+                "Foo",
+                Guid.Parse("{499b3e29-b8a1-4016-a972-84ad08da139a}"),
+                new[] { new IDSymbol("One", 1), new IDSymbol("Two", 2) }
+            )
         );
     }
 
@@ -66,22 +67,23 @@ public class CommandTableParserTests
                 </Symbols>
             </CommandTable>".TrimStart();
 
-        CommandTable commandTable = CommandTableParser.Parse(contents);
+        CommandTable commandTable = CommandTableParser.Parse("test", contents);
 
         Assert.NotNull(commandTable);
+        Assert.Equal("test", commandTable.Name);
 
         VerifySymbols(
-            commandTable.Guids,
-            ("Foo", Guid.Parse("{499b3e29-b8a1-4016-a972-84ad08da139a}")),
-            ("Bar", Guid.Parse("{66dc4b3b-ce9b-4377-a655-3e80f9b8e828}"))
-        );
-
-        VerifySymbols(
-            commandTable.Ids,
-            ("One", 1),
-            ("Two", 2),
-            ("Three", 3),
-            ("Four", 4)
+            commandTable.GUIDSymbols,
+            new GUIDSymbol(
+                "Foo",
+                Guid.Parse("{499b3e29-b8a1-4016-a972-84ad08da139a}"),
+                new[] { new IDSymbol("One", 1), new IDSymbol("Two", 2) }
+            ),
+            new GUIDSymbol(
+                "Bar",
+                Guid.Parse("{66dc4b3b-ce9b-4377-a655-3e80f9b8e828}"),
+                new[] { new IDSymbol("Three", 3), new IDSymbol("Four", 4) }
+            )
         );
     }
 
@@ -102,7 +104,7 @@ public class CommandTableParserTests
                 </Symbols>
             </CommandTable>".TrimStart();
 
-        Assert.Throws<InvalidCommandTableException>(() => CommandTableParser.Parse(contents));
+        Assert.Throws<InvalidCommandTableException>(() => CommandTableParser.Parse("test", contents));
     }
 
     [Theory]
@@ -118,13 +120,15 @@ public class CommandTableParserTests
                 </Symbols>
             </CommandTable>".TrimStart();
 
-        CommandTable commandTable = CommandTableParser.Parse(contents);
-        VerifySymbols(commandTable.Guids, ("Foo", new Guid("{873f2e80-0fee-4c56-a10b-8406982ca66f}")));
+        CommandTable commandTable = CommandTableParser.Parse("test", contents);
+        VerifySymbols(
+            commandTable.GUIDSymbols,
+            new GUIDSymbol("Foo", new Guid("{873f2e80-0fee-4c56-a10b-8406982ca66f}"), Enumerable.Empty<IDSymbol>())
+        );
     }
 
     [Theory]
     [InlineData("invalid")]
-    [InlineData("123")]
     [InlineData("0x12gh")]
     public void ThrowsExceptionWhenIdCannotBeParsed(string idValue)
     {
@@ -138,7 +142,7 @@ public class CommandTableParserTests
                 </Symbols>
             </CommandTable>".TrimStart();
 
-        Assert.Throws<InvalidCommandTableException>(() => CommandTableParser.Parse(contents));
+        Assert.Throws<InvalidCommandTableException>(() => CommandTableParser.Parse("test", contents));
     }
 
     [Theory]
@@ -149,6 +153,7 @@ public class CommandTableParserTests
     [InlineData("0x1", 1)]
     [InlineData("0X1", 1)]
     [InlineData("0X000001", 1)]
+    [InlineData("123", 123)]
     public void CanParseValidIdFormats(string idValue, int id)
     {
         string contents = $@"
@@ -161,15 +166,79 @@ public class CommandTableParserTests
                 </Symbols>
             </CommandTable>".TrimStart();
 
-        CommandTable commandTable = CommandTableParser.Parse(contents);
-        VerifySymbols(commandTable.Ids, ("One", id));
+        CommandTable commandTable = CommandTableParser.Parse("test", contents);
+        VerifySymbols(
+            commandTable.GUIDSymbols,
+            new GUIDSymbol("Foo", Guid.Parse("{77ab4e86-d0fc-4185-929c-f09b25f762b5}"), new[] { new IDSymbol("One", id) })
+        );
     }
 
-    private static void VerifySymbols<T>(IDictionary<string, T> actual, params (string Name, T Value)[] expected)
+    private static void VerifySymbols(IEnumerable<GUIDSymbol> actual, params GUIDSymbol[] expected)
     {
+        // Convert the expected and actual collections to arrays to make any assertion
+        // failure messages easier to read, because the messages include the type name,
+        // and that can be quite long if we leave them as sone form of IEnumerable.
         Assert.Equal(
             expected.OrderBy((x) => x.Name).ToArray(),
-            actual.Select((x) => (x.Key, x.Value)).OrderBy((x) => x.Key).ToArray()
+            actual.OrderBy((x) => x.Name).ToArray(),
+            GUIDSymbolComparer.Instance
         );
+    }
+
+    private class GUIDSymbolComparer : IEqualityComparer<GUIDSymbol>
+    {
+        public static GUIDSymbolComparer Instance { get; } = new();
+
+        public bool Equals(GUIDSymbol? x, GUIDSymbol? y)
+        {
+            if (x is null)
+            {
+                return y is null;
+            }
+            else if (y is null)
+            {
+                return false;
+            }
+
+            return string.Equals(x.Name, y.Name, StringComparison.Ordinal) &&
+                x.Value == y.Value &&
+                x.IDSymbols.ToHashSet(IDSymbolComparer.Instance).SetEquals(y.IDSymbols);
+        }
+
+        public int GetHashCode([DisallowNull] GUIDSymbol obj)
+        {
+            HashCode hashCode = new();
+            hashCode.Add(obj.Name);
+            hashCode.Add(obj.Value);
+            foreach (IDSymbol id in obj.IDSymbols)
+            {
+                hashCode.Add(id, IDSymbolComparer.Instance);
+            }
+            return hashCode.ToHashCode();
+        }
+    }
+
+    private class IDSymbolComparer : IEqualityComparer<IDSymbol>
+    {
+        public static IDSymbolComparer Instance { get; } = new();
+
+        public bool Equals(IDSymbol? x, IDSymbol? y)
+        {
+            if (x is null)
+            {
+                return y is null;
+            }
+            else if (y is null)
+            {
+                return false;
+            }
+
+            return string.Equals(x.Name, y.Name, StringComparison.Ordinal) && x.Value == y.Value;
+        }
+
+        public int GetHashCode([DisallowNull] IDSymbol obj)
+        {
+            return HashCode.Combine(obj.Name, obj.Value);
+        }
     }
 }

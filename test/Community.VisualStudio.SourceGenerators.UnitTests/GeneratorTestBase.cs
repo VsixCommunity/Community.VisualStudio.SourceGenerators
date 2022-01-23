@@ -24,7 +24,7 @@ public abstract class GeneratorTestBase : IDisposable
         Directory.CreateDirectory(TempDirectory);
     }
 
-    protected abstract ISourceGenerator CreateGenerator();
+    protected abstract IIncrementalGenerator CreateGenerator();
 
     protected string TempDirectory { get; }
 
@@ -90,12 +90,15 @@ public abstract class GeneratorTestBase : IDisposable
                 inputCompilation.GetDiagnostics().Where((x) => x.IsWarningAsError || x.Severity == DiagnosticSeverity.Error)
             );
 
-            CSharpGeneratorDriver driver = CSharpGeneratorDriver.Create(
-                new ISourceGenerator[] { CreateGenerator() },
-                additionalTexts: await GetAdditionalTextsAsync(project).ConfigureAwait(false),
-                parseOptions: project.ParseOptions as CSharpParseOptions,
-                optionsProvider: project.AnalyzerOptions.AnalyzerConfigOptionsProvider
-            );
+            GeneratorDriver driver = CSharpGeneratorDriver
+                    .Create(CreateGenerator())
+                    .AddAdditionalTexts(ImmutableArray.CreateRange(await GetAdditionalTextsAsync(project).ConfigureAwait(false)))
+                    .WithUpdatedAnalyzerConfigOptions(project.AnalyzerOptions.AnalyzerConfigOptionsProvider);
+
+            if (project.ParseOptions is not null)
+            {
+                driver = driver.WithUpdatedParseOptions(project.ParseOptions);
+            }
 
             driver.RunGeneratorsAndUpdateCompilation(
                 inputCompilation,

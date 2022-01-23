@@ -39,6 +39,9 @@
     <AssemblyAttribute Include="System.Resources.NeutralResourcesLanguageAttribute">
       <_Parameter1>en-US</_Parameter1>
     </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Community.VisualStudio.SourceGenerators.UnitTests</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 
   <ItemGroup>

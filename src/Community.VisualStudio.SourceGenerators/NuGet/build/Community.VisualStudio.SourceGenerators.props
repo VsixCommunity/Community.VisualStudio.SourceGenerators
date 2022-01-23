@@ -2,11 +2,17 @@
   
   <ItemGroup>
     <!-- 
-    Allow the root namespace to be accessible within the generator.
-    This allows the generator to generate the code in the root namespace.
+    Make the root namespace accessible within the generator
+    so that the code can be generated in the root namespace.
     -->
     <CompilerVisibleProperty Include="RootNamespace" />
-  
+
+    <!-- 
+    Make the language version accessible within the generator so that the
+    generator can determine whether nullable reference types are allowed.
+    -->
+    <CompilerVisibleProperty Include="LangVersion" />
+    
     <!-- 
     Allow the `Namespace` metadata of the AdditionalFiles to be accessible within the generator.
     This allows the generator to generate the code into a specific namespace instead of the root namespace.

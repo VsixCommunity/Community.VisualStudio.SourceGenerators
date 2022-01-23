@@ -7,7 +7,7 @@ namespace Community.VisualStudio.SourceGenerators;
 
 public class ManifestGeneratorTests : GeneratorTestBase
 {
-    protected override ISourceGenerator CreateGenerator() => new ManifestGenerator();
+    protected override IIncrementalGenerator CreateGenerator() => new ManifestGenerator();
 
     [Fact]
     public async Task ShouldReportDiagnosticWhenManifestFileIsInvalidAsync()
