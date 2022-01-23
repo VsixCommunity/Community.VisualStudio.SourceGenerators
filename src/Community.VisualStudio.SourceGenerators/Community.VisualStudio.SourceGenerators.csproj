@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <PatchVersion Condition="'$(PatchVersion)' == ''">0</PatchVersion>
+    <Version Condition="'$(Version)' == ''">1.0.$(PatchVersion)</Version>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <PackageDescription>C# source generators for Visual Studio extension development.</PackageDescription>
     <PackageTags>VisualStudio, VSSDK, SDK</PackageTags>
     <DebugType>portable</DebugType>

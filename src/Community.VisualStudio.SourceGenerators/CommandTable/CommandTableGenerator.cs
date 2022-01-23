@@ -70,7 +70,7 @@ public class CommandTableGenerator : GeneratorBase, IIncrementalGenerator
         foreach (GUIDSymbol symbol in commandTable.GUIDSymbols.OrderBy((x) => x.Name))
         {
             string guidName = GetGuidName(symbol.Name);
-            builder.AppendLine($"        public const string {guidName}String = \"{symbol.Value:B}\";");
+            builder.AppendLine($"        public const string {guidName}String = \"{symbol.Value:D}\";");
             builder.AppendLine($"        public static readonly System.Guid {guidName} = new System.Guid({guidName}String);");
         }
 
