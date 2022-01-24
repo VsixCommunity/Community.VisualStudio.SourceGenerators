@@ -69,7 +69,7 @@ public class CommandTableGenerator : GeneratorBase, IIncrementalGenerator
 
         foreach (GUIDSymbol symbol in commandTable.GUIDSymbols.OrderBy((x) => x.Name))
         {
-            string guidName = GetGuidName(symbol.Name);
+            string guidName = SafeIdentifierName(GetGuidName(symbol.Name));
             builder.AppendLine($"        public const string {guidName}String = \"{symbol.Value:D}\";");
             builder.AppendLine($"        public static readonly System.Guid {guidName} = new System.Guid({guidName}String);");
         }
@@ -92,7 +92,7 @@ public class CommandTableGenerator : GeneratorBase, IIncrementalGenerator
 
         foreach (IDSymbol symbol in commandTable.GUIDSymbols.SelectMany((x) => x.IDSymbols).OrderBy((x) => x.Name))
         {
-            builder.AppendLine($"        public const int {symbol.Name} = 0x{symbol.Value:X4};");
+            builder.AppendLine($"        public const int {SafeIdentifierName(symbol.Name)} = 0x{symbol.Value:X4};");
         }
 
         builder.AppendLine("    }");
@@ -110,6 +110,20 @@ public class CommandTableGenerator : GeneratorBase, IIncrementalGenerator
         {
             name = name.Substring(4);
         }
+
+        return name;
+    }
+
+    private static string SafeIdentifierName(string name)
+    {
+        // Replace all invalid characters with an underscore.
+        name = Regex.Replace(name, "[^\\p{L}\\p{Nl}\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}\\p{Cf}]", "_");
+
+        // Make sure the name starts with a letter or underscore.
+        if (!Regex.IsMatch(name, "^[\\p{L}\\p{Nl}_]"))
+        {
+            name = "_" + name;
+        };
 
         return name;
     }

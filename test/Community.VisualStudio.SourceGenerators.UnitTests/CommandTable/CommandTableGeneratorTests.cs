@@ -209,6 +209,68 @@ public class CommandTableGeneratorTests : GeneratorTestBase
         ).ConfigureAwait(false);
     }
 
+    [Theory]
+    [MemberData(nameof(InvalidIdentifierTestData))]
+    public async Task EnsuresGuidNameIsValidAsync(string originalName, string escapedName)
+    {
+        SetProjectProperty("RootNamespace", "Root");
+
+        await WriteCommandTableAsync(
+            "Symbols.vsct",
+            $@"
+            <CommandTable xmlns='http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+                <Symbols>
+                    <GuidSymbol name='{originalName}' value='{{26891d9b-0896-402f-a59b-693a3ea72962}}'/>
+                </Symbols>
+            </CommandTable>"
+            ).ConfigureAwait(false);
+
+        Compilation compilation = await RunGeneratorAndVerifyNoDiagnosticsAsync().ConfigureAwait(false);
+
+        INamedTypeSymbol? packageGuidsType = compilation.GetTypeByMetadataName("Root.PackageGuids");
+        await VerifyPackageGuidsTypeAsync(
+            packageGuidsType,
+            (escapedName, new Guid("{26891d9b-0896-402f-a59b-693a3ea72962}"))
+        ).ConfigureAwait(false);
+    }
+
+    [Theory]
+    [MemberData(nameof(InvalidIdentifierTestData))]
+    public async Task EnsuresIdNameIsValidAsync(string originalName, string escapedName)
+    {
+        SetProjectProperty("RootNamespace", "Root");
+
+        await WriteCommandTableAsync(
+            "Symbols.vsct",
+            $@"
+            <CommandTable xmlns='http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+                <Symbols>
+                    <GuidSymbol name='Foo' value='{{26891d9b-0896-402f-a59b-693a3ea72962}}'>
+                        <IDSymbol name='{originalName}' value='42'/>
+                    </GuidSymbol>
+                </Symbols>
+            </CommandTable>"
+            ).ConfigureAwait(false);
+
+        Compilation compilation = await RunGeneratorAndVerifyNoDiagnosticsAsync().ConfigureAwait(false);
+
+        INamedTypeSymbol? packageIdsType = compilation.GetTypeByMetadataName("Root.PackageIds");
+        await VerifyPackageIdsTypeAsync(
+            packageIdsType,
+            (escapedName, 42)
+        ).ConfigureAwait(false);
+    }
+
+    public static IEnumerable<object[]> InvalidIdentifierTestData()
+    {
+        yield return new[] { "Foo.Bar", "Foo_Bar" };
+        yield return new[] { "Foo~Bar", "Foo_Bar" };
+        yield return new[] { ".Foo", "_Foo" };
+        yield return new[] { ".Foo,Bar", "_Foo_Bar" };
+        yield return new[] { "123", "_123" };
+        yield return new[] { "+", "_" };
+    }
+
     [Fact]
     public async Task ShouldGeneratePackageIdsClassForIDSymbolsAsync()
     {
@@ -408,7 +470,7 @@ public class CommandTableGeneratorTests : GeneratorTestBase
         IFieldSymbol stringField = Assert.IsAssignableFrom<IFieldSymbol>(stringMember);
         Assert.True(stringField.IsConst);
         Assert.Equal(SpecialType.System_String, stringField.Type.SpecialType);
-        Assert.Equal(value.ToString("B"), stringField.ConstantValue);
+        Assert.Equal(value.ToString("D"), stringField.ConstantValue);
 
         // There should be a static read-only field with the given name.
         ISymbol guidMember = Assert.Single(containingType.GetMembers(name));
