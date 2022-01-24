@@ -66,7 +66,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="NuGet\build\Community.VisualStudio.SourceGenerators.props" Pack="true" PackagePath="build\Community.VisualStudio.SourceGenerators.props" />
+    <None Update="NuGet\build\Community.VisualStudio.SourceGenerators.targets">
+      <Pack>true</Pack>
+      <PackagePath>build\Community.VisualStudio.SourceGenerators.targets</PackagePath>
+    </None>
   </ItemGroup>
 
   <Target Name="PackBuildOutputs" BeforeTargets="_GetPackageFiles" DependsOnTargets="SatelliteDllsProjectOutputGroup">

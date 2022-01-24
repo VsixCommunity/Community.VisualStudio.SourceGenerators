@@ -1,0 +1,72 @@
+﻿<Project>
+
+  <ItemGroup>
+    <!-- 
+    Make the root namespace accessible within the generator
+    so that the code can be generated in the root namespace.
+    -->
+    <CompilerVisibleProperty Include="RootNamespace" />
+
+    <!-- 
+    Make the language version accessible within the generator so that the
+    generator can determine whether nullable reference types are allowed.
+    -->
+    <CompilerVisibleProperty Include="LangVersion" />
+
+    <!-- 
+    Allow the `Namespace` metadata of the AdditionalFiles to be accessible 
+    within the generator. This allows the generator to generate the code 
+    into a specific namespace instead of the root namespace.
+    -->
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="Namespace" />
+  
+    <!-- 
+    Copy all `VSCTCompile` items (the `.vsct` files) into the additional files.
+    This allows the generator to access them. This will also copy all of their 
+    metadata, so a custom namespace can be specified like this:
+
+      <VSCTCompile Include="VSCommandTable.vsct">
+        <ResourceName>Menus.ctmenu</ResourceName>
+        <Namespace>MyCustomNamespace</Namespace>
+      </VSCTCompile>
+
+    Because we aren't applying any filtering (unlike the
+    manifest file) we can do this outside of a target.
+    -->
+    <AdditionalFiles Include="@(VSCTCompile)"/>
+  </ItemGroup>
+  
+  <Target Name="AddVsixManifestToAdditionalFiles" BeforeTargets="PrepareForBuild">
+    <ItemGroup>
+      <!-- 
+      Copy the `source.extension.vsixmanifest` into the additional files so that the generator 
+      can access it. We could include the `source.extension.vsixmanifest` directly into 
+      the `AdditionalFiles` like this:
+      
+        <AdditionalFiles Include="source.extension.vsixmanifest" />
+        
+      But if we do that, then any metadata that is stored against the `None` item
+      for that file is not copied. That means if you want to specify a custom namespace
+      for the generated file, you would need to add the `Namespace` metadata to the 
+      `AdditionalFiles`, which is not very intuitive.
+      
+      Instead, by copying the manifest from the `None` items, any metadata defined against
+      the `None` item is copied as well. That means you can define a custom namespace by 
+      simply adding `Namespace` metadata to the `None` item like this:
+      
+        <None Include='source.extension.vsixmanifest'>
+          <Namespace>MyCustomNamespace</Namespace>
+        </None>
+        
+      Note that because we are filtering the `None` items by their metadata (to ensure that
+      we only copy the `source.extension.vsixmanifest` file and not any other `None` items)
+      we have to do this copying inside a target.
+      -->
+      <AdditionalFiles
+        Include="@(None)"
+        Condition="$([System.String]::Copy('%(FullPath)').EndsWith('source.extension.vsixmanifest'))"
+        />
+    </ItemGroup>
+  </Target>
+
+</Project>

@@ -62,12 +62,12 @@ public abstract class GeneratorTestBase : IDisposable
             $@"<?xml version=""1.0"" encoding=""utf-8""?>
             <Project ToolsVersion=""15.0"" DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
                 <Import Project=""$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props"" Condition=""Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"" />
-                <Import Project=""{GetGeneratorsImportPath(".props")}"" />
                 <PropertyGroup>
                     <OutputType>Library</OutputType>
                     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
                 </PropertyGroup>
                 {string.Join(Environment.NewLine, _projectSegments)}
+                <Import Project=""{GetGeneratorsImportPath(".targets")}"" />
                 <Import Project=""$(MSBuildToolsPath)\Microsoft.CSharp.targets"" />
             </Project>"
         ).ConfigureAwait(false);

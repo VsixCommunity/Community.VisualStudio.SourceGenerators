@@ -83,14 +83,6 @@ public class ManifestGeneratorTests : GeneratorTestBase
     [Fact]
     public async Task ShouldGenerateTheCodeIntoTheNamespaceSpecifiedOnTheAdditionalFilesItemForTheManifestFileAsync()
     {
-        AddProjectFileFragment(@"
-            <ItemGroup>
-                <AdditionalFiles Update='source.extension.vsixmanifest'>
-                    <Namespace>Manifest.Props</Namespace>
-                </AdditionalFiles>
-            </ItemGroup>"
-        );
-
         await WriteManifestAsync(@"
             <PackageManifest Version='2.0.0' xmlns='http://schemas.microsoft.com/developer/vsx-schema/2011'>
                 <Metadata>
@@ -98,7 +90,8 @@ public class ManifestGeneratorTests : GeneratorTestBase
                     <DisplayName>My Test Extension</DisplayName>
                     <Description>The description</Description>
                 </Metadata>
-            </PackageManifest>"
+            </PackageManifest>",
+            itemNamespace: "Manifest.Props"
         ).ConfigureAwait(false);
 
         Compilation compilation = await RunGeneratorAndVerifyNoDiagnosticsAsync().ConfigureAwait(false);
@@ -144,16 +137,17 @@ public class ManifestGeneratorTests : GeneratorTestBase
         }).ConfigureAwait(false);
     }
 
-    private async Task WriteManifestAsync(string contents)
+    private async Task WriteManifestAsync(string contents, string? itemNamespace = null)
     {
         await WriteFileAsync("source.extension.vsixmanifest", contents).ConfigureAwait(false);
 
-        AddProjectFileFragment(@"
+        AddProjectFileFragment($@"
             <ItemGroup>
                 <None Include='source.extension.vsixmanifest'>
                     <SubType>Designer</SubType>
                     <Generator>VsixManifestGenerator</Generator>
                     <LastGenOutput>source.extension.cs</LastGenOutput>
+                    {(itemNamespace is not null ? $"<Namespace>{itemNamespace}</Namespace>" : "")}
                 </None>
             </ItemGroup>"
         );

@@ -101,7 +101,8 @@ public class CommandTableGeneratorTests : GeneratorTestBase
                 <Symbols>
                     <GuidSymbol name='Two' value='{9e1526aa-35df-4e91-af17-bbcc6122ccfe}'/>
                 </Symbols>
-            </CommandTable>"
+            </CommandTable>",
+            itemNamespace: "Second"
         ).ConfigureAwait(false);
 
         await WriteCommandTableAsync(
@@ -111,19 +112,9 @@ public class CommandTableGeneratorTests : GeneratorTestBase
                 <Symbols>
                     <GuidSymbol name='Three' value='{21b17ebd-1dab-462c-a44f-3b2bab6c4ff1}'/>
                 </Symbols>
-            </CommandTable>"
+            </CommandTable>",
+            itemNamespace: "Third"
         ).ConfigureAwait(false);
-
-        AddProjectFileFragment(@"
-            <ItemGroup>
-                <AdditionalFiles Update='2.vsct'>
-                    <Namespace>Second</Namespace>
-                </AdditionalFiles>
-                <AdditionalFiles Update='3.vsct'>
-                    <Namespace>Third</Namespace>
-                </AdditionalFiles>
-            </ItemGroup>"
-        );
 
         Compilation compilation = await RunGeneratorAndVerifyNoDiagnosticsAsync().ConfigureAwait(false);
 
@@ -331,7 +322,8 @@ public class CommandTableGeneratorTests : GeneratorTestBase
                         <IDSymbol name='Two' value='0x02'/>
                     </GuidSymbol>
                 </Symbols>
-            </CommandTable>"
+            </CommandTable>",
+            itemNamespace: "Second"
         ).ConfigureAwait(false);
 
         await WriteCommandTableAsync(
@@ -343,19 +335,9 @@ public class CommandTableGeneratorTests : GeneratorTestBase
                         <IDSymbol name='Three' value='0x03'/>
                     </GuidSymbol>
                 </Symbols>
-         </CommandTable>"
+         </CommandTable>",
+            itemNamespace: "Third"
         ).ConfigureAwait(false);
-
-        AddProjectFileFragment(@"
-            <ItemGroup>
-                <AdditionalFiles Update='2.vsct'>
-                    <Namespace>Second</Namespace>
-                </AdditionalFiles>
-                <AdditionalFiles Update='3.vsct'>
-                    <Namespace>Third</Namespace>
-                </AdditionalFiles>
-            </ItemGroup>"
-        );
 
         Compilation compilation = await RunGeneratorAndVerifyNoDiagnosticsAsync().ConfigureAwait(false);
 
@@ -421,15 +403,15 @@ public class CommandTableGeneratorTests : GeneratorTestBase
         ).ConfigureAwait(false);
     }
 
-    private async Task WriteCommandTableAsync(string fileName, string contents)
+    private async Task WriteCommandTableAsync(string fileName, string contents, string? itemNamespace = null)
     {
         await WriteFileAsync(fileName, contents).ConfigureAwait(false);
 
         AddProjectFileFragment($@"
             <ItemGroup>
                 <VSCTCompile Include='{fileName}'>
-                    <Generator>VsctGenerator</Generator>
                     <ResourceName>Menus.ctmenu</ResourceName>
+                    {(itemNamespace is not null ? $"<Namespace>{itemNamespace}</Namespace>" : "")}
                 </VSCTCompile>
             </ItemGroup>"
         );

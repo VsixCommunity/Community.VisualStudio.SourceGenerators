@@ -23,13 +23,13 @@ The source generator will create a class called `Vsix` with the following consta
 
 #### Use a custom namespace
 
-The `Vsix` class will be generated in the root namespace of the project. If you would like to generate the code into a different namespace, you can specify the namespace by defining the `Namespace` metadata for the `AdditionalFiles` item like this:
+The `Vsix` class will be generated in the root namespace of the project. If you would like to generate the code into a different namespace, you can specify the namespace by defining the `Namespace` metadata for the `source.extension.vsixmanifest` file like this:
 
 ```xml
 <ItemGroup>
-    <AdditionalFiles Update="source.extension.vsixmanifest">
+    <None Include="source.extension.vsixmanifest">
         <Namespace>MyCustomNamespace</Namespace>
-    </AdditionalFiles>
+    </None>
 </ItemGroup>
 ```
 
@@ -70,12 +70,13 @@ internal sealed class PackageIds
 
 #### Use a custom namespace
 
-The `PackageGuids` and `PackageIds` classes will be generated in the root namespace of the project. If you would like to generate the code into a different namespace, you can specify the namespace by defining the `Namespace` metadata for the `AdditionalFiles` item like this:
+The `PackageGuids` and `PackageIds` classes will be generated in the root namespace of the project. If you would like to generate the code into a different namespace, you can specify the namespace by defining the `Namespace` metadata for the `VSCTCompile` item like this:
 
 ```xml
 <ItemGroup>
-    <AdditionalFiles Update="MyCommandTable.vsct">
+    <VSCTCompile Include="MyCommandTable.vsct">
+        <ResourceName>Menus.ctmenu</ResourceName>
         <Namespace>MyCustomNamespace</Namespace>
-    </AdditionalFiles>
+    </VSCTCompile>
 </ItemGroup>
 ```
