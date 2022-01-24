@@ -10,8 +10,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageDescription>C# source generators for Visual Studio extension development.</PackageDescription>
-    <PackageTags>VisualStudio, VSSDK, SDK</PackageTags>
     <DebugType>portable</DebugType>
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
@@ -19,6 +17,24 @@
     <NoWarn>$(NoWarn);NU5128</NoWarn>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>VSIX Community</Authors>
+    <Owners>VSIX Community</Owners>
+    <PackageProjectUrl>https://github.com/VsixCommunity/Community.VisualStudio.SourceGenerators</PackageProjectUrl>
+    <RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <PackageIcon>Icon.png</PackageIcon>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageDescription>C# source generators for Visual Studio extension development.</PackageDescription>
+    <PackageTags>VisualStudio, VSSDK, SDK</PackageTags>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Icon.png" Link="Icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" PrivateAssets="all" />
