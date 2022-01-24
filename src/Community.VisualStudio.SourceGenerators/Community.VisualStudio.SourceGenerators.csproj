@@ -61,7 +61,7 @@
       <_Parameter1>en-US</_Parameter1>
     </AssemblyAttribute>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>Community.VisualStudio.SourceGenerators.UnitTests</_Parameter1>
+      <_Parameter1>Community.VisualStudio.SourceGenerators.UnitTests, PublicKey=00240000048000009400000006020000002400005253413100040000010001005540e4c16fa9f2b856901277a98745eeefd2c835d4b101fe1a97c2baa3edcdd26f66c89a2b4b45e94e27d05187ac1f25d3af3879d56eff7597328cd513a9479085ae28019af3ea3f3d52470695f671f3f8f30597bf9e6f17649265160dc45b8c4abecf39ad61a123a4f083a9128c7d880f52e1ce5c2653d26da33cefd689cfe8</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
 
