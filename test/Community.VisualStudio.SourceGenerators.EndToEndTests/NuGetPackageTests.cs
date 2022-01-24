@@ -23,6 +23,7 @@ public sealed class NuGetPackageTests : IClassFixture<NuGetPackageTests.Fixture>
     [Theory]
     [InlineData("Legacy")]
     [InlineData("Wpf")] // A specific test for WPF because of https://github.com/dotnet/wpf/issues/3404.
+    [InlineData("CustomNamespace")]
     public async Task NuGetPackageWorksAsync(string projectDirectory)
     {
         await _fixture.BuildProjectAsync(projectDirectory, _testOutputHelper).ConfigureAwait(false);
