@@ -16,10 +16,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{589EC942-90CD-4CBF-AEBF-1F21C7EEE3B0}"
+	ProjectSection(SolutionItems) = preProject
+		test\.editorconfig = test\.editorconfig
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Community.VisualStudio.SourceGenerators.UnitTests", "test\Community.VisualStudio.SourceGenerators.UnitTests\Community.VisualStudio.SourceGenerators.UnitTests.csproj", "{9D7B8767-CF76-4A59-A5A3-3F0B1053DE5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Community.VisualStudio.SourceGenerators.EndToEndTests", "test\Community.VisualStudio.SourceGenerators.EndToEndTests\Community.VisualStudio.SourceGenerators.EndToEndTests.csproj", "{6C0DC0B8-45EB-4100-B2D1-A691C1ADA474}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Community.VisualStudio.SourceGenerators.EndToEndTests", "test\Community.VisualStudio.SourceGenerators.EndToEndTests\Community.VisualStudio.SourceGenerators.EndToEndTests.csproj", "{6C0DC0B8-45EB-4100-B2D1-A691C1ADA474}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

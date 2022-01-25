@@ -19,7 +19,13 @@
     into a specific namespace instead of the root namespace.
     -->
     <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="Namespace" />
-  
+
+    <!-- 
+    Make the `Format` metadata of the AdditionalFiles to be accessible within the generator.
+    This allows the generator to determine which type of classes it should generate.
+    -->
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="Format" />
+    
     <!-- 
     Copy all `VSCTCompile` items (the `.vsct` files) into the additional files.
     This allows the generator to access them. This will also copy all of their 

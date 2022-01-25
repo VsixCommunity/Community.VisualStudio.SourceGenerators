@@ -2,12 +2,12 @@
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
 
-namespace Legacy
+namespace VsixSynchronizerFormat
 {
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-    [Guid(PackageGuids.LegacyPackageString)]
+    [Guid(PackageGuids.VsixSynchronizerFormatPackageString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    public sealed class LegacyPackage : AsyncPackage
+    public sealed class VsixSynchronizerFormatPackage : AsyncPackage
     {
         public override string ToString()
         {

@@ -35,11 +35,11 @@ The `Vsix` class will be generated in the root namespace of the project. If you 
 
 ## Command Table Files
 
-The source generator will create a class called `PackageGuids`. This class will contain a `string` constant and `Guid` field for each `<GUIDSymbol>` in any `.vsct` files. 
+The source generator will create a container class that is named after the `.vsct` file. Within that container class, a class will be created for each `<GUIDSymbol>`.
 
-A class called `PackageIds` will also be created that contains a constant for each `IDSymbol` in any `.vsct` files.
+The class for a `<GUIDSymbol>` contains a `Guid` and `GuidString` field that defines the GUID value, and each `<IDSymbol>` is defined as a constant.
 
-For example, this `.vsct` file:
+For example, a `VSCommandTable.vsct` file that looks like this:
 
 ```xml
 <CommandTable xmlns='http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
@@ -52,25 +52,31 @@ For example, this `.vsct` file:
 </CommandTable>
 ```
 
-Will result in these classes:
+Will result in this:
 
-```cs
-internal sealed class PackageGuids
+```csharp
+internal sealed partial class VSCommandTable
 {
-    public const string MyPackageString = "e5d94a98-30f6-47da-88bb-1bdf3b4157ff";
-    public static readonly Guid MyPackage = new Guid(MyPackageString);
+    internal sealed partial class MyPackage
+    {
+        public const string GuidString = "e5d94a98-30f6-47da-88bb-1bdf3b4157ff";
+        public static readonly Guid Guid = new Guid(GuidString);
+    
+        public const int MyFirstCommand = 1;
+        public const int MySecondCommand = 2;
+    }
 }
+```
 
-internal sealed class PackageIds
-{
-    public const int MyFirstCommand = 1;
-    public const int MySecondCommand = 2;
-}
+You can then access the `Guid` and IDs like this:
+
+```csharp
+[GuidAttribute(VSCommandTable.MyPackage.GuidString)]
 ```
 
 #### Use a custom namespace
 
-The `PackageGuids` and `PackageIds` classes will be generated in the root namespace of the project. If you would like to generate the code into a different namespace, you can specify the namespace by defining the `Namespace` metadata for the `VSCTCompile` item like this:
+The classes will be generated in the root namespace of the project. If you would like to generate the code into a different namespace, you can specify the namespace by defining the `Namespace` metadata for the `VSCTCompile` item like this:
 
 ```xml
 <ItemGroup>
@@ -79,4 +85,33 @@ The `PackageGuids` and `PackageIds` classes will be generated in the root namesp
         <Namespace>MyCustomNamespace</Namespace>
     </VSCTCompile>
 </ItemGroup>
+```
+
+#### Migrating from the Vsix Synchronizer extension
+
+If you are migrating from the [Vsix Synchronizer](https://github.com/madskristensen/VsixSynchronizer) extension and would like to continue to use the `PackageGuids` and `PackageIds` classes that it generates, you can change the output format by defining the `Format` metadata for the `VSCTCompile` item like this:
+
+```xml
+<ItemGroup>
+    <VSCTCompile Include="MyCommandTable.vsct">
+        <ResourceName>Menus.ctmenu</ResourceName>
+        <Format>VsixSynchronizer</Format>
+    </VSCTCompile>
+</ItemGroup>
+```
+
+This will result in classes like this:
+
+```csharp
+internal sealed partial class PackageGuids
+{
+    public const string MyPackageString = "e5d94a98-30f6-47da-88bb-1bdf3b4157ff";
+    public static readonly Guid MyPackage = new Guid(MyPackageString);
+}
+
+internal sealed partial class PackageIds
+{
+    public const int MyFirstCommand = 1;
+    public const int MySecondCommand = 2;
+}
 ```

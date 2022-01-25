@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="Legacy.c541cb48-c166-45b4-9ae7-bdf705e0bb77" Version="1.0" Language="en-US" Publisher="VSIX Community" />
-        <DisplayName>Legacy</DisplayName>
+        <Identity Id="VsixSynchronizerFormat.a017837c-00ee-4dec-ba28-d7d69f2e943b" Version="1.0" Language="en-US" Publisher="VSIX Community" />
+        <DisplayName>VsixSynchronizerFormat</DisplayName>
         <Description xml:space="preserve">Empty VSIX Project.</Description>
     </Metadata>
     <Installation>

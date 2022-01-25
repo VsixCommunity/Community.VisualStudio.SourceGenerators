@@ -4,7 +4,7 @@
   <Extern href="vsshlids.h"/>
 
   <Symbols>
-    <GuidSymbol name="LegacyPackage" value="{73300c48-32e9-43fd-a29a-b1144f5c84a4}">
+    <GuidSymbol name="DefaultFormatPackage" value="{f1cec119-fe01-4817-9f7b-ceea9ceb0c62}">
       <IDSymbol name="MyCommand" value="0x0100" />
     </GuidSymbol>
   </Symbols>

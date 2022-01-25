@@ -1,11 +1,10 @@
-﻿using System.Text;
-using System.Text.RegularExpressions;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Community.VisualStudio.SourceGenerators;
 
 [Generator]
-public class CommandTableGenerator : GeneratorBase, IIncrementalGenerator
+public class CommandTableGenerator : IIncrementalGenerator
 {
     private static readonly DiagnosticDescriptor _invalidCommandTableFile = new(
         DiagnosticIds.CVSSG003_InvalidCommandTableFile,
@@ -16,18 +15,21 @@ public class CommandTableGenerator : GeneratorBase, IIncrementalGenerator
         true
     );
 
+    private readonly DefaultCommandTableCodeWriter _defaultWriter = new();
+    private readonly VsixSynchronizerCommandTableCodeWriter _vsxiSynchronizerWriter = new();
+
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        IncrementalValuesProvider<(string FilePath, string FileContents, string Namespace, string LangVersion)> values = context
+        IncrementalValuesProvider<(string FilePath, string FileContents, string Namespace, string LangVersion, string Format)> values = context
             .AdditionalTextsProvider
-            .Where(static (file) => Path.GetExtension(file.Path).Equals(".vsct", StringComparison.OrdinalIgnoreCase))
             .Where(static (file) => Path.GetExtension(file.Path).Equals(".vsct", StringComparison.OrdinalIgnoreCase))
             .Combine(context.AnalyzerConfigOptionsProvider)
             .Select(static (item, cancellationToken) => (
                 FilePath: item.Left.Path,
                 FileContents: item.Left.GetText(cancellationToken)?.ToString() ?? "",
                 Namespace: item.Right.GetNamespace(item.Left),
-                LangVersion: item.Right.GetLangVersion()
+                LangVersion: item.Right.GetLangVersion(),
+                Format: GetFormat(item.Right, item.Left)
             ));
 
         context.RegisterSourceOutput(
@@ -51,80 +53,27 @@ public class CommandTableGenerator : GeneratorBase, IIncrementalGenerator
                     return;
                 }
 
-                GeneratePackageGuids(commandTable, data.Namespace, data.LangVersion, context);
-                GeneratePackageIds(commandTable, data.Namespace, data.LangVersion, context);
+                CommandTableCodeWriter writer;
+                if (string.Equals(data.Format, _vsxiSynchronizerWriter.Format, StringComparison.OrdinalIgnoreCase))
+                {
+                    writer = _vsxiSynchronizerWriter;
+                }
+                else
+                {
+                    writer = _defaultWriter;
+                }
+
+                foreach (GeneratedFile file in writer.Write(commandTable, data.Namespace, data.LangVersion))
+                {
+                    context.AddSource(file.FileName, file.Code);
+                }
             }
         );
     }
 
-    private static void GeneratePackageGuids(CommandTable commandTable, string containingNamespace, string langVersion, SourceProductionContext context)
+    private static string GetFormat(AnalyzerConfigOptionsProvider options, AdditionalText file)
     {
-        StringBuilder builder = new();
-        WritePreamble(builder, langVersion);
-        builder.AppendLine($"namespace {containingNamespace}");
-        builder.AppendLine("{");
-        builder.AppendLine("    /// <summary>Defines GUIDs from VSCT files.</summary>");
-        builder.AppendLine("    internal sealed partial class PackageGuids");
-        builder.AppendLine("    {");
-
-        foreach (GUIDSymbol symbol in commandTable.GUIDSymbols.OrderBy((x) => x.Name))
-        {
-            string guidName = SafeIdentifierName(GetGuidName(symbol.Name));
-            builder.AppendLine($"        public const string {guidName}String = \"{symbol.Value:D}\";");
-            builder.AppendLine($"        public static readonly System.Guid {guidName} = new System.Guid({guidName}String);");
-        }
-
-        builder.AppendLine("    }");
-        builder.AppendLine("}");
-
-        context.AddSource($"PackageGuids.{commandTable.Name}.g.cs", builder.ToString());
-    }
-
-    private static void GeneratePackageIds(CommandTable commandTable, string containingNamespace, string langVersion, SourceProductionContext context)
-    {
-        StringBuilder builder = new();
-        WritePreamble(builder, langVersion);
-        builder.AppendLine($"namespace {containingNamespace}");
-        builder.AppendLine("{");
-        builder.AppendLine("    /// <summary>Defines IDs from VSCT files.</summary>");
-        builder.AppendLine("    internal sealed partial class PackageIds");
-        builder.AppendLine("    {");
-
-        foreach (IDSymbol symbol in commandTable.GUIDSymbols.SelectMany((x) => x.IDSymbols).OrderBy((x) => x.Name))
-        {
-            builder.AppendLine($"        public const int {SafeIdentifierName(symbol.Name)} = 0x{symbol.Value:X4};");
-        }
-
-        builder.AppendLine("    }");
-        builder.AppendLine("}");
-
-        context.AddSource($"PackageIds.{commandTable.Name}.g.cs", builder.ToString());
-    }
-
-    private static string GetGuidName(string name)
-    {
-        // If the name starts with "guid", then trim it off because
-        // that prefix doesn't provide any additional information
-        // since all symbols defined in the class are GUIDs.
-        if (Regex.IsMatch(name, "^guid[A-Z]"))
-        {
-            name = name.Substring(4);
-        }
-
-        return name;
-    }
-
-    private static string SafeIdentifierName(string name)
-    {
-        // Replace all invalid characters with an underscore.
-        name = Regex.Replace(name, "[^\\p{L}\\p{Nl}\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}\\p{Cf}]", "_");
-
-        // Make sure the name starts with a letter or underscore.
-        if (!Regex.IsMatch(name, "^[\\p{L}\\p{Nl}_]"))
-        {
-            name = "_" + name;
-        };
-
-        return name;
+        options.GetOptions(file).TryGetValue("build_metadata.AdditionalFiles.Format", out string? format);
+        return format ?? "";
     }
 }

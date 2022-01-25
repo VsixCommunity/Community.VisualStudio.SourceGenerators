@@ -2,16 +2,16 @@
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
 
-namespace Legacy
+namespace DefaultFormat
 {
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-    [Guid(Generated.VSCommandTable.LegacyPackage.GuidString)]
+    [Guid(VSCommandTable.DefaultFormatPackage.GuidString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    public sealed class LegacyPackage : AsyncPackage
+    public sealed class DefaultFormatPackage : AsyncPackage
     {
         public override string ToString()
         {
-            return $"{Generated.Vsix.Name}, MyCommand={Generated.VSCommandTable.LegacyPackage.MyCommand}";
+            return $"{Vsix.Name}, MyCommand={VSCommandTable.DefaultFormatPackage.MyCommand}";
         }
     }
 }

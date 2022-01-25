@@ -4,7 +4,7 @@
   <Extern href="vsshlids.h"/>
 
   <Symbols>
-    <GuidSymbol name="LegacyPackage" value="{d6e7376b-712b-48d8-8795-04944204255e}">
+    <GuidSymbol name="VsixSynchronizerFormatPackage" value="{73300c48-32e9-43fd-a29a-b1144f5c84a4}">
       <IDSymbol name="MyCommand" value="0x0100" />
     </GuidSymbol>
   </Symbols>
