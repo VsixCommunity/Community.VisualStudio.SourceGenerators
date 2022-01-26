@@ -2,6 +2,8 @@
 
 Part of the [VSIX Community](https://github.com/VsixCommunity)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/6y2vim0h3c9nvlxk?svg=true)](https://ci.appveyor.com/project/madskristensen/community-visualstudio-sourcegenerators)
+
 ## Summary
 
 This package contains [C# source generators](https://docs.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/source-generators-overview) that generate code from `.vsixmanfiest` files and `.vsct` files.
