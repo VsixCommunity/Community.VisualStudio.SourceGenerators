@@ -12,10 +12,10 @@ install:
 
 build_script:
   - ps: $env:MinorVersion = "0.$($env:appveyor_build_number)"
-  - ps: MSBuild -restore /p:configuration=Release /p:ContinuousIntegrationBuild=true
+  - ps: MSBuild -restore /v:m /p:configuration=Release /p:ContinuousIntegrationBuild=true
  
 artifacts:
-  - path: _Packages\*.nupkg
+  - path: src\**\*.nupkg
     name: NuGet package
 
 deploy:
