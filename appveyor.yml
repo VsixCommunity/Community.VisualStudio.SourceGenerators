@@ -14,7 +14,7 @@ build_script:
   - ps: MSBuild -restore /v:m /p:configuration=Release /p:ContinuousIntegrationBuild=true /p:Version=$($env:appveyor_build_version)
  
 artifacts:
-  - path: src\**\*.nupkg
+  - path: src\**\*$($env:appveyor_build_version).nupkg
     name: NuGet package
 
 deploy:
