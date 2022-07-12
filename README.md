@@ -6,7 +6,7 @@ Part of the [VSIX Community](https://github.com/VsixCommunity)
 
 ## Summary
 
-This package contains [C# source generators](https://docs.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/source-generators-overview) that generate code from `.vsixmanfiest` files and `.vsct` files.
+This package contains [C# source generators](https://docs.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/source-generators-overview) that generate code from `.vsixmanifest` files and `.vsct` files.
 
 These source generators are a replacement for the single-file generators from the [VsixSynchronizer](https://github.com/madskristensen/VsixSynchronizer) extension.
 
