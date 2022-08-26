@@ -28,7 +28,7 @@ internal class ManifestCodeWriter : WriterBase
         builder.AppendLine("        /// <summary>The name of the extension.</summary>");
         builder.AppendLine($"        public const string Name = \"{EscapeStringLiteral(manifest.Name)}\";");
         builder.AppendLine("");
-        builder.AppendLine("        /// <summary>The verison of the extension.</summary>");
+        builder.AppendLine("        /// <summary>The version of the extension.</summary>");
         builder.AppendLine($"        public const string Version = \"{EscapeStringLiteral(manifest.Version)}\";");
         builder.AppendLine("    }");
         builder.AppendLine("}");
